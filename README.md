@@ -7,7 +7,7 @@ CLASS cache_mock
     lru: 1 for Least-Recently-Used and 0 for First-In-First-Out Heirarchy
     no_sets: total number of sets in the cache
     
-    container: Vector matrix which simulates the functioning of cache.
+    container: Vector matrix which simulates the functioning of cache
 
 Functions
     
