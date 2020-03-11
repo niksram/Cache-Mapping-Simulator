@@ -12,9 +12,11 @@ private:
     long int mem_size;
     long int block_size;
     long int set_size;
+    long int no_sets;
     long int lru;
     vector<vector<long int>> container;
-    long int min_heirarchy(long int set, long int update);
+    long int find_heirarchy_min(long int set);
+    long int find_heirarchy_max(long int set);
 
 public:
     cache_mock(long int, long int, long int, long int, long int = 0, long int = 0);
@@ -29,6 +31,7 @@ cache_mock::cache_mock(long int d, long int c, long int m, long int b, long int 
         set_size = 1;
     else if (d == 2)
         set_size = c;
+    no_sets = cache_size / (block_size * set_size);
     container_init();
 }
 
@@ -42,7 +45,7 @@ void cache_mock::container_init()
         vector<long int> block;
         block.push_back(i);
         block.push_back(-1);           //tag_bit
-        block.push_back(-1);           //dirty_bit
+        block.push_back(0);            //dirty_bit
         block.push_back(i % set_size); //heirarchy
         for (long int j = 0; j < block_size; j++)
         {
@@ -78,41 +81,59 @@ long int cache_mock::loader(long int address)
     if (address >= mem_size)
         return -1;
     long int block = address / block_size;
-    long int set = block / set_size;
-    long int tag = mem_size / cache_size;
-    for (int i = 4; i < container[0].size(); i++)
+    long int set = block % no_sets;
+    long int tag = address / (block_size * no_sets);
+    for (long int i = 0; i < set_size; i++) // Hit Case!!!
     {
-        container[set * set_size + minh][i] = block * block_size + i - 4;
+        if (container[set * set_size + i][1] == tag)
+        {
+            if (lru)
+                container[set * set_size + i][3] = container[find_heirarchy_max(set)][3] + 1;
+            return 1;
+        }
     }
+    //miss case
+    long int min_heir=find_heirarchy_min(set);
+    container[min_heir][1]=tag;
+    container[min_heir][2]=0;
+    container[min_heir][3]=container[find_heirarchy_max(set)][3]+1;
+    for(int i=4;i<container[0].size();i++)
+    {
+        container[min_heir][i]=block*block_size+i-4;
+    }    
 }
 
-long int cache_mock::min_heirarchy(long int set, long int update)
+long int cache_mock::find_heirarchy_max(long int set)
 {
-    long int block = set * set_size;
-    long int min = block;
-    long int max = block;
+    long int max = set * set_size;
+    for (long int i = 0; i < set_size; i++)
+    {
+        if (container[set * set_size + i][3] > container[max][3])
+        {
+            max = set * set_size + i;
+        }
+    }
+    return (max);
+}
+
+long int cache_mock::find_heirarchy_min(long int set)
+{
+    long int min = set * set_size;
     for (long int i = 0; i < set_size; i++)
     {
         if (container[set * set_size + i][3] < container[min][3])
         {
             min = set * set_size + i;
         }
-        if (ontainer[set * set_size + i][3] > container[max][3])
-        {
-            max = set * set_size + i;
-        }
     }
-    if (update)
-    {
-        container[set * set_size + i][3] = container[max][3] + 1;
-    }
-    return min;
+    return (min);
 }
 
 int main()
 {
     cache_mock a(1, 16, 2048, 2);
-    a.loader(17);
+    cout<<a.loader(2047)<<endl;
+    cout<<a.loader(2047)<<endl;
     a.container_display();
     return 0;
 }
