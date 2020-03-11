@@ -1,39 +1,34 @@
-#include <iostream>
-#include <iomanip>
-#include <bits/stdc++.h>
-#include <vector>
-using namespace std;
+#include "cache_mapper_header.h"
 
-class cache_mock
-{
-private:
-    long int desc; // 0 - Set_Associative, 1 - Direct Mapping, 2 - Associative
-    long int cache_size;
-    long int mem_size;
-    long int block_size;
-    long int set_size;
-    long int no_sets;
-    long int lru;
-    vector<vector<long int>> container;
-    long int find_heirarchy_min(long int set);
-    long int find_heirarchy_max(long int set);
-
-public:
-    cache_mock(long int, long int, long int, long int, long int = 0, long int = 0);
-    void container_init();
-    void container_display();
-    long int loader(long int);
-    long int storer(long int);
-};
-
-cache_mock::cache_mock(long int d, long int c, long int m, long int b, long int s, long int l) : desc(d), cache_size(c), mem_size(m), block_size(b), set_size(s), lru(l)
+cache_mock::cache_mock(long int d, long int c, long int m, long int b, long int l, long int s) : desc(d), cache_size(c), mem_size(m), block_size(b), lru(l), set_size(s)
 {
     if (d == 1)
         set_size = 1;
     else if (d == 2)
-        set_size = c/b;
+        set_size = c / b;
     no_sets = cache_size / (block_size * set_size);
     container_init();
+}
+
+cache_mock::cache_mock() : desc(1), cache_size(1), mem_size(1), block_size(1), lru(1), set_size(1)
+{
+}
+
+void cache_mock::cache_mock_copy(cache_mock &c)
+{
+    this->desc = c.desc;
+    this->cache_size = c.cache_size;
+    this->mem_size = c.mem_size;
+    this->block_size = c.block_size;
+    this->lru = c.lru;
+    this->set_size = c.set_size;
+    this->container=c.container;
+    //copy(c.container.begin(), c.container.end(), this->container.begin());
+}
+
+cache_mock::~cache_mock()
+{
+    container.clear();
 }
 
 void cache_mock::container_init()
@@ -94,15 +89,15 @@ long int cache_mock::loader(long int address)
         }
     }
     //miss case
-    long int min_heir=find_heirarchy_min(set);
-    container[min_heir][1]=tag;
-    container[min_heir][2]=0;
-    container[min_heir][3]=container[find_heirarchy_max(set)][3]+1;
-    for(int i=4;i<container[0].size();i++)
+    long int min_heir = find_heirarchy_min(set);
+    container[min_heir][1] = tag;
+    container[min_heir][2] = 0;
+    container[min_heir][3] = container[find_heirarchy_max(set)][3] + 1;
+    for (int i = 4; i < container[0].size(); i++)
     {
-        container[min_heir][i]=block*block_size+i-4;
+        container[min_heir][i] = block * block_size + i - 4;
     }
-    return 0;    
+    return 0;
 }
 
 long int cache_mock::storer(long int address)
@@ -118,20 +113,20 @@ long int cache_mock::storer(long int address)
         {
             if (lru)
                 container[set * set_size + i][3] = container[find_heirarchy_max(set)][3] + 1;
-            container[set*set_size+i][2]=1;
+            container[set * set_size + i][2] = 1;
             return 1;
         }
     }
     //miss case
-    long int min_heir=find_heirarchy_min(set);
-    container[min_heir][1]=tag;
-    container[min_heir][2]=0;
-    container[min_heir][3]=container[find_heirarchy_max(set)][3]+1;
-    for(int i=4;i<container[0].size();i++)
+    long int min_heir = find_heirarchy_min(set);
+    container[min_heir][1] = tag;
+    container[min_heir][2] = 0;
+    container[min_heir][3] = container[find_heirarchy_max(set)][3] + 1;
+    for (int i = 4; i < container[0].size(); i++)
     {
-        container[min_heir][i]=block*block_size+i-4;
+        container[min_heir][i] = block * block_size + i - 4;
     }
-    return 0;    
+    return 0;
 }
 
 long int cache_mock::find_heirarchy_max(long int set)
@@ -160,11 +155,10 @@ long int cache_mock::find_heirarchy_min(long int set)
     return (min);
 }
 
-int main()
+long int cache_mock::refresh_dirty()
 {
-    cache_mock a(2, 16, 2048, 2);
-    cout<<a.loader(2047)<<endl;
-    cout<<a.loader(1576)<<endl;
-    a.container_display();
-    return 0;
+    for (int i = 0; i < container.size(); i++)
+    {
+        container[i][2] = 0;
+    }
 }
