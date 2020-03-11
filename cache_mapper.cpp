@@ -22,7 +22,7 @@ void cache_mock::cache_mock_copy(cache_mock &c)
     this->block_size = c.block_size;
     this->lru = c.lru;
     this->set_size = c.set_size;
-    this->container=c.container;
+    this->container = c.container;
     //copy(c.container.begin(), c.container.end(), this->container.begin());
 }
 

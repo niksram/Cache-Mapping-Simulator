@@ -33,14 +33,14 @@ int main()
     cout << "3 to refresh dirty_bits, 4 to clear cache main_frame, else exit" << endl;
     while (flag)
     {
-        cout<<"Input"<<endl;
+        cout << "Input" << endl;
         cin >> val;
         switch (val)
         {
         case 0:
         {
             Cacher.container_display();
-            cout<<endl;
+            cout << endl;
             break;
         }
         case 1:
