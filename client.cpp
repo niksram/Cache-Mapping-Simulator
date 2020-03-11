@@ -11,13 +11,13 @@ int main()
     long int address;
     cout << "Enter 0 for Set-Associative, 1 for Direct-Map, 2 for Fully-Associative" << endl;
     cin >> d;
-    cout << "Enter Memory-Size, Cache-Size, Block-Size in Bytes/Words (stick to 1 convention)" << endl;
-    cin >> m >> c >> b;
+    cout << "Enter Cache-Size, Memory-Size, Block-Size in Bytes/Words (stick to one convention)" << endl;
+    cin >> c >> m >> b;
     cout << "Enter 1 for Least-Recently-Used, 0 for First-In-First-Out Heirarchy" << endl;
     cin >> l;
     if (!d)
     {
-        cout << "Enter X for X-way associative";
+        cout << "Enter X for X-way associative"<<endl;
         cin >> s;
         cache_mock temp(d, c, m, b, l, s);
         Cacher.cache_mock_copy(temp);
@@ -30,7 +30,7 @@ int main()
     int flag = 1;
     int val;
     cout << "0 to display, 1 to load followed by address, 2 to store followed by address" << endl;
-    cout << "3 to refresh dirty_bits, 4 to clear cache main_frame, else exit" << endl;
+    cout << "3 to refresh dirty_bits, 4 to clear cache main_frame, else exit\n" << endl;
     while (flag)
     {
         cout << "Input" << endl;
@@ -64,16 +64,19 @@ int main()
         case 3:
         {
             Cacher.refresh_dirty();
+            break;
         }
         case 4:
         {
             Cacher.container_init();
+            break;
         }
         default:
         {
             flag--;
         }
         }
+        cout<<endl;
     }
     cout << "Simulation Terminated!" << endl;
 }
