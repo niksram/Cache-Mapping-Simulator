@@ -17,8 +17,8 @@ private:
     long int no_sets;
     long int lru; //when lru=0, fifo is followed
     vector<vector<long int>> container;
-    long int find_heirarchy_min(long int set);
-    long int find_heirarchy_max(long int set);
+    long int find_hierarchy_min(long int set);
+    long int find_hierarchy_max(long int set);
 
 public:
     cache_mock(long int, long int, long int, long int, long int = 1, long int = 0);

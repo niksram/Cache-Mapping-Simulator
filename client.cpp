@@ -13,7 +13,7 @@ int main()
     cin >> d;
     cout << "Enter Cache-Size, Memory-Size, Block-Size in Bytes/Words (stick to one convention)" << endl;
     cin >> c >> m >> b;
-    cout << "Enter 1 for Least-Recently-Used, 0 for First-In-First-Out Heirarchy" << endl;
+    cout << "Enter 1 for Least-Recently-Used, 0 for First-In-First-Out Hierarchy" << endl;
     cin >> l;
     if (!d)
     {
@@ -29,7 +29,7 @@ int main()
     }
     int flag = 1;
     int val;
-    cout << "0 to display, 1 to load followed by address, 2 to store followed by address" << endl;
+    cout << "\n0 to display, 1 to load followed by address, 2 to store followed by address" << endl;
     cout << "3 to refresh dirty_bits, 4 to clear cache main_frame, else exit\n" << endl;
     while (flag)
     {

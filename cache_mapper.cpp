@@ -43,7 +43,7 @@ void cache_mock::container_init()
         block.push_back(i);
         block.push_back(-1);           //tag_bit
         block.push_back(0);            //dirty_bit
-        block.push_back(i % set_size); //heirarchy
+        block.push_back(i % set_size); //hierarchy
         for (long int j = 0; j < block_size; j++)
         {
             block.push_back(-1);
@@ -54,12 +54,19 @@ void cache_mock::container_init()
 
 void cache_mock::container_display()
 {
-    printf("ID\tTag\tDirty\tHeirarchy\tBlock-Display\n");
+    if(!desc)
+        printf("Set\t");
+    printf("ID\tTag\tDirty\thierarchy\tBlock-Display\n");
     for (long int i = 0; i < container.size(); i++)
     {
-        if (!(i % set_size))
+        if (!desc)
         {
-            printf("\n");
+            if(!(i % set_size))
+            {
+                printf("\n");
+                printf("%ld",i/set_size);
+            }
+            printf("\t");
         }
         for (long int j = 0; j < container[i].size(); j++)
         {
@@ -85,15 +92,15 @@ long int cache_mock::loader(long int address)
         if (container[set * set_size + i][1] == tag)
         {
             if (lru)
-                container[set * set_size + i][3] = container[find_heirarchy_max(set)][3] + 1;
+                container[set * set_size + i][3] = container[find_hierarchy_max(set)][3] + 1;
             return 1;
         }
     }
     //miss case
-    long int min_heir = find_heirarchy_min(set);
+    long int min_heir = find_hierarchy_min(set);
     container[min_heir][1] = tag;
     container[min_heir][2] = 0;
-    container[min_heir][3] = container[find_heirarchy_max(set)][3] + 1;
+    container[min_heir][3] = container[find_hierarchy_max(set)][3] + 1;
     for (int i = 4; i < container[0].size(); i++)
     {
         container[min_heir][i] = block * block_size + i - 4;
@@ -113,16 +120,16 @@ long int cache_mock::storer(long int address)
         if (container[set * set_size + i][1] == tag)
         {
             if (lru)
-                container[set * set_size + i][3] = container[find_heirarchy_max(set)][3] + 1;
+                container[set * set_size + i][3] = container[find_hierarchy_max(set)][3] + 1;
             container[set * set_size + i][2] = 1;
             return 1;
         }
     }
     //miss case
-    long int min_heir = find_heirarchy_min(set);
+    long int min_heir = find_hierarchy_min(set);
     container[min_heir][1] = tag;
     container[min_heir][2] = 0;
-    container[min_heir][3] = container[find_heirarchy_max(set)][3] + 1;
+    container[min_heir][3] = container[find_hierarchy_max(set)][3] + 1;
     for (int i = 4; i < container[0].size(); i++)
     {
         container[min_heir][i] = block * block_size + i - 4;
@@ -130,7 +137,7 @@ long int cache_mock::storer(long int address)
     return 0;
 }
 
-long int cache_mock::find_heirarchy_max(long int set)
+long int cache_mock::find_hierarchy_max(long int set)
 {
     long int max = set * set_size;
     for (long int i = 0; i < set_size; i++)
@@ -143,7 +150,7 @@ long int cache_mock::find_heirarchy_max(long int set)
     return (max);
 }
 
-long int cache_mock::find_heirarchy_min(long int set)
+long int cache_mock::find_hierarchy_min(long int set)
 {
     long int min = set * set_size;
     for (long int i = 0; i < set_size; i++)
