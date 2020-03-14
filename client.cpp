@@ -13,8 +13,13 @@ int main()
     cin >> d;
     cout << "Enter Cache-Size, Memory-Size, Block-Size in Bytes/Words (stick to one convention)" << endl;
     cin >> c >> m >> b;
-    cout << "Enter 1 for Least-Recently-Used, 0 for First-In-First-Out Hierarchy" << endl;
-    cin >> l;
+    if (d != 1)
+    {
+        // There is no requirement of replacement techniques for direct mapped cache.
+        cout << "Enter 1 for Least-Recently-Used, 0 for First-In-First-Out Hierarchy" << endl;
+        cin >> l;
+    }
+    
     if (!d)
     {
         cout << "Enter X for X-way associative"<<endl;
@@ -29,8 +34,8 @@ int main()
     }
     int flag = 1;
     int val;
-    cout << "\n0 to display, 1 to load followed by address, 2 to store followed by address" << endl;
-    cout << "3 to refresh dirty_bits, 4 to clear cache main_frame, else exit\n" << endl;
+    cout << "\n0 : Display\n1 : Load followed by address\n2 : Store followed by address" << endl;
+    cout << "3 : Refresh dirty_bits\n4 : Clear cache main_frame\n5 : Exit\n" << endl;
     while (flag)
     {
         cout << "Input" << endl;
@@ -46,10 +51,16 @@ int main()
         case 1:
         {
             cin >> address;
-            if (Cacher.loader(address))
+            int addressFlag = Cacher.loader(address);
+            if (addressFlag == 1)
                 cout << "Hit" << endl;
-            else
+            else if(addressFlag == 0)
                 cout << "Miss" << endl;
+            else
+            {
+                cout << "Invalid address input" << endl;
+            }
+            
             break;
         }
         case 2:
@@ -69,11 +80,18 @@ int main()
         case 4:
         {
             Cacher.container_init();
+            cout << "Cache was cleared!" << endl;
+            break;
+        }
+        case 5:
+        {
+            flag--;
             break;
         }
         default:
         {
-            flag--;
+            cout << "\n0 : Display\n1 : Load followed by address\n2 : Store followed by address" << endl;
+            cout << "3 : Refresh dirty_bits\n4 : Clear cache main_frame\n5 : Exit\n" << endl;   
         }
         }
         cout<<endl;

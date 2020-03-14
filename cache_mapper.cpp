@@ -82,7 +82,7 @@ void cache_mock::container_display()
 
 long int cache_mock::loader(long int address)
 {
-    if (address >= mem_size)
+    if (address >= mem_size || address < 0)
         return -1;
     long int block = address / block_size;
     long int set = block % no_sets;
